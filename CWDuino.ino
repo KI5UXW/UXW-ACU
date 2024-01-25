@@ -1,8 +1,8 @@
 #include <LiquidCrystal_I2C.h>
 
 const int keyerOutput = 11;  // Pin for Morse code output
-int dotDelay = 5;  // Duration of a dot in milliseconds
-int currentWPM = 5;
+int dotDelay = 120;  // Duration of a dot in milliseconds
+int currentWPM = 20;
 const int dashMultiplier = 3;  // Multiplier for dash duration
 int spaceDelay;  // Duration of a space between words (7 times dot duration)
 LiquidCrystal_I2C lcd(0x27, 16, 2);
@@ -33,7 +33,7 @@ void displayWPM() {
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("WPM: ");
-  lcd.print(map(dotDelay, 1, 60, 1, 60));  // Map dotDelay to WPM range
+  lcd.print(map(currentWPM, 1, 60, 1, 60));  // Map dotDelay to WPM range
 }
 
 void displayCharacter(char character) {
@@ -58,16 +58,16 @@ void setSpeed() {
   
   while (digitalRead(setButtonPin) == LOW) {
     if (digitalRead(increaseButtonPin) == HIGH) {
-      dotDelay += 1;
-      if (dotDelay > 60) {
-        dotDelay = 60;
+      currentWPM += 1;
+      if (currentWPM > 60) {
+        currentWPM = 60;
       }
       displayWPM();
       delay(100);
     } else if (digitalRead(decreaseButtonPin) == HIGH) {
-      dotDelay -= 1;
-      if (dotDelay < 1) {
-        dotDelay = 1;
+      currentWPM -= 1;
+      if (currentWPM < 1) {
+        currentWPM = 1;
       }
       displayWPM();
       delay(100);
@@ -77,8 +77,7 @@ void setSpeed() {
   if (digitalRead(setButtonPin) == HIGH) {
     lcd.clear();
     lcd.print("Speed set.");
-	currentWPM = dotDelay;
-    dotDelay = 60.0 / (dotDelay / 20.0);
+    dotDelay = ((60 / (50 * currentWPM)) * 1000);
     delay(500);
 
     lcd.clear();
