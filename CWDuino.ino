@@ -1,7 +1,7 @@
 #include <LiquidCrystal_I2C.h>
 
 const int keyerOutput = 11;  // Pin for Morse code output
-int dotDelay = 120;  // Duration of a dot in milliseconds
+int dotDelay = 60;  // Duration of a dot in milliseconds
 int currentWPM = 20;
 const int dashMultiplier = 3;  // Multiplier for dash duration
 int spaceDelay;  // Duration of a space between words (7 times dot duration)
