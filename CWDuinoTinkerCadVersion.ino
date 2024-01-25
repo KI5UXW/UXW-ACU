@@ -16,7 +16,7 @@ void setup() {
   lcd.begin(16, 2);
   lcd.setBacklight(1);
   lcd.setCursor(0, 0);
-  lcd.print("UXW-MCA");
+  lcd.print("UXW-ACU");
   lcd.setCursor(0, 1);
   lcd.print("Version 0.0.1");
   delay(1000);
