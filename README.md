@@ -1,2 +1,2 @@
-UXW-ACU:
-A tool for encoding and decoding CW.
+# UXW-ACU
+A Morse code encoder and decoder for Arduino.
