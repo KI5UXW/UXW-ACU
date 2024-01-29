@@ -15,6 +15,8 @@ const int dashMultiplier = 3;  // Multiplier for dash duration
 int spaceDelay (dotDelay * 7);  // Duration of a space between words (7 times dot duration)
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 int currentMenu = 1;
+int numGroups = 5;
+const char charSet[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ,/?!.";
 
 
 const int increaseButtonPin = 2;  // Pin for increasing WPM
@@ -29,7 +31,7 @@ void setup() {
  lcd.setCursor(0, 0);
  lcd.print("UXW-ACU");
  lcd.setCursor(0, 1);
- lcd.print("Version 0.0.2");
+ lcd.print("Version 0.0.3");
  delay(1000);
  lcd.clear();
  Serial.begin(9600);  // Initialize serial communication
@@ -403,6 +405,183 @@ void foxMode() {
 }
 
 
+void learnCWLetters() {
+ while (digitalRead(setButtonPin) == LOW) {
+   if (digitalRead(increaseButtonPin) == HIGH) {
+     numGroups += 1;
+     if (numGroups > 100) {  // Adjust the upper limit as needed
+       numGroups = 1;
+     }
+     lcd.clear();
+     lcd.print("Groups: ");
+     lcd.print(numGroups);
+     delay(100);
+   } else if (digitalRead(decreaseButtonPin) == HIGH) {
+     numGroups -= 1;
+     if (numGroups < 1) {
+       numGroups = 100;  // Adjust the lower limit as needed
+     }
+     lcd.clear();
+     lcd.print("Groups: ");
+     lcd.print(numGroups);
+     delay(100);
+   }
+ }
+
+
+ if (digitalRead(setButtonPin) == HIGH) {
+   for (int i = 0; i < numGroups; ++i) {
+     // Generate and send random groups
+     char char1 = random('A', 'Z' + 1);
+     char char2 = random('A', 'Z' + 1);
+     char char3 = random('A', 'Z' + 1);
+
+
+     txCW(char1);
+     txCW(char2);
+     txCW(char3);
+
+
+     // Delay between characters
+     delay(spaceDelay * 2);
+   }
+ }
+}
+
+
+void learnCWNumbers() {
+ while (digitalRead(setButtonPin) == LOW) {
+   if (digitalRead(increaseButtonPin) == HIGH) {
+     numGroups += 1;
+     if (numGroups > 100) {  // Adjust the upper limit as needed
+       numGroups = 1;
+     }
+     delay(100);
+   } else if (digitalRead(decreaseButtonPin) == HIGH) {
+     numGroups -= 1;
+     if (numGroups < 1) {
+       numGroups = 100;  // Adjust the lower limit as needed
+     }
+     lcd.clear();
+     lcd.print("Groups: ");
+     lcd.print(numGroups);
+     delay(100);
+   }
+ }
+
+
+ if (digitalRead(setButtonPin) == HIGH) {
+   for (int i = 0; i < numGroups; ++i) {
+     // Generate and send random groups
+     char char1 = random('0', '9' + 1);
+     char char2 = random('0', '9' + 1);
+     char char3 = random('0', '9' + 1);
+
+
+     txCW(char1);
+     txCW(char2);
+     txCW(char3);
+
+
+     // Delay between groups
+     delay(spaceDelay * 2);
+   }
+ }
+}
+
+
+void learnCWPunctuation() {
+ while (digitalRead(setButtonPin) == LOW) {
+   if (digitalRead(increaseButtonPin) == HIGH) {
+     numGroups += 1;
+     if (numGroups > 100) {  // Adjust the upper limit as needed
+       numGroups = 1;
+     }
+     delay(100);
+   } else if (digitalRead(decreaseButtonPin) == HIGH) {
+     numGroups -= 1;
+     if (numGroups < 1) {
+       numGroups = 100;  // Adjust the lower limit as needed
+     }
+     lcd.clear();
+     lcd.print("Groups: ");
+     lcd.print(numGroups);
+     delay(100);
+   }
+ }
+
+
+ if (digitalRead(setButtonPin) == HIGH) {
+   for (int i = 0; i < numGroups; ++i) {
+     // Generate and send random groups
+     char char1 = random(",/?!."[i % 5]);
+     char char2 = random(",/?!."[i % 5]);
+     char char3 = random(",/?!."[i % 5]);
+
+
+     txCW(char1);
+     txCW(char2);
+     txCW(char3);
+
+
+     // Delay between groups
+     delay(spaceDelay * 2);
+   }
+ }
+}
+
+
+char randomChar() {
+ // Get a random index within the charSet array
+ int index = random(sizeof(charSet));
+
+
+ // Return the character at the random index
+ return charSet[index];
+}
+
+
+void learnCW() {
+ while (digitalRead(setButtonPin) == LOW) {
+   if (digitalRead(increaseButtonPin) == HIGH) {
+     numGroups += 1;
+     if (numGroups > 10) {  // Adjust the upper limit as needed
+       numGroups = 1;
+     }
+     lcd.clear();
+     lcd.print("Groups: ");
+     lcd.print(numGroups);
+     delay(100);
+   } else if (digitalRead(decreaseButtonPin) == HIGH) {
+     numGroups -= 1;
+     if (numGroups < 1) {
+       numGroups = 10;  // Adjust the lower limit as needed
+     }
+     lcd.clear();
+     lcd.print("Groups: ");
+     lcd.print(numGroups);
+     delay(100);
+   }
+ }
+
+
+ if (digitalRead(setButtonPin) == HIGH) {
+   for (int i = 0; i < numGroups; ++i) {
+     // Generate and send random groups
+     char char1 = randomChar();
+     char char2 = randomChar();
+     char char3 = randomChar();
+
+
+     txCW(char1);
+     txCW(char2);
+     txCW(char3);
+
+
+     delay(spaceDelay);
+   }
+ }
+}
 
 
 void loop() {
@@ -422,14 +601,20 @@ void loop() {
    lcd.clear();
    lcd.setCursor(0, 0);
    lcd.print("A: CLL   0: RDD");
-   lcd.setCursor(0, 1);
+   lcd.setCursor(0, 1);int numGroups = 5;
    lcd.print("V: GRD   O: NXT");
  } else if (currentMenu == 4) {
    lcd.clear();
    lcd.setCursor(0, 0);
    lcd.print("A: CLR   0: N/A");
    lcd.setCursor(0, 1);
-   lcd.print("V: N/A   O: NXT");
+   lcd.print("V: LRN   O: NXT");
+ } else if (currentMenu == 5) {
+   lcd.clear();
+   lcd.setCursor(0, 0);
+   lcd.print("A: ABC   0: 123");
+   lcd.setCursor(0, 1);
+   lcd.print("V: .!?   O: NXT");
  }
 
 
@@ -476,9 +661,20 @@ void loop() {
    if (digitalRead(increaseButtonPin) == HIGH) {
      clearEEPROM(); //Clear EEPROM.
    } else if (digitalRead(decreaseButtonPin) == HIGH) {
-     noMode();
+     learnCW();
    } else if (digitalRead(setButtonPin) == HIGH) {
      noMode();
+   } else if (digitalRead(otherButtonPin) == HIGH) {
+     currentMenu += 1;
+     delay(100);
+   }
+ } else if (currentMenu == 5) {
+   if (digitalRead(increaseButtonPin) == HIGH) {
+     learnCWLetters();
+   } else if (digitalRead(decreaseButtonPin) == HIGH) {
+     learnCWPunctuation();
+   } else if (digitalRead(setButtonPin) == HIGH) {
+     learnCWNumbers();
    } else if (digitalRead(otherButtonPin) == HIGH) {
      currentMenu = 1;
      delay(100);
@@ -678,6 +874,10 @@ void txCW(char character) {
      Serial.print("!");
      blinkMorse("-.-.--");
      break;
+   case '/':
+     Serial.print("/");
+     blinkMorse("-..-.");
+     break;
    case ' ':
      Serial.print(" ");
      delay(spaceDelay);
@@ -706,3 +906,4 @@ void blinkMorse(String morseCode) {
  }
  delay(dotDelay);  // Gap between characters
 }
+
